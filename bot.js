@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
-const petfinder = require('@petfinder/petfinder-js');
 const Twitter = require('twitter');
+const fetch = require('node-fetch');
 
 dotenv.config({ path: './config.env' });
 
@@ -11,27 +11,33 @@ const twitterClient = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_SECRET,
 });
 
-const petClient = new petfinder.Client({
-  apiKey: process.env.PF_API_KEY,
-  secret: process.env.PF_SECRET_KEY,
-});
-
 const newDogsThisHour = async () => {
-  await petClient.authenticate();
-
-  const hourago = new Date(new Date().getTime() - 1000 * 60 * 60);
+  const hourAgo = new Date(new Date().getTime() - 1000 * 60 * 60).toISOString();
 
   let dogsWithPhotos = [];
 
   try {
-    const apiResult = await petClient.animal.search({
-      type: 'Dog',
-      location: '30303',
-      distance: 100,
-      after: hourago,
+    const tokenRes = await fetch('https://api.petfinder.com/v2/oauth2/token', {
+      method: 'POST',
+      body: `grant_type=client_credentials&client_id=${process.env.PF_API_KEY}&client_secret=${process.env.PF_SECRET_KEY}`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
 
-    const animals = apiResult.data.animals;
+    const { access_token } = await tokenRes.json();
+
+    const dogsRes = await fetch(
+      `https://api.petfinder.com/v2/animals?type=dog&location=30303&distance=100&after=${hourAgo.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+
+    const { animals } = await dogsRes.json();
 
     if (animals.length === 0) {
       return null;
@@ -50,8 +56,6 @@ const newDogsThisHour = async () => {
 
 const shareDog = async () => {
   const newDogs = await newDogsThisHour();
-
-  console.log(newDogs);
 
   if (newDogs) {
     twitterClient.post(
