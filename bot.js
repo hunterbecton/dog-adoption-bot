@@ -28,7 +28,7 @@ const newDogsThisHour = async () => {
     const { access_token } = await tokenRes.json();
 
     const dogsRes = await fetch(
-      `https://api.petfinder.com/v2/animals?type=dog&location=30303&distance=100&after=${hourAgo.toString()}`,
+      `https://api.petfinder.com/v2/animals?type=dog&location=30303&distance=100&after=${hourAgo}`,
       {
         headers: {
           Authorization: `Bearer ${access_token}`,
