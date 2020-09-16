@@ -1,7 +1,6 @@
 const dotenv = require('dotenv');
 const petfinder = require('@petfinder/petfinder-js');
 const Twitter = require('twitter');
-const cron = require('node-cron');
 
 dotenv.config({ path: './config.env' });
 
@@ -72,11 +71,7 @@ const shareDog = async () => {
   }
 };
 
-// Share when app deploys
+// Share when server starts
 shareDog();
 
-// Share at minute 30 past every hour.
-cron.schedule('35 */1 * * *', () => {
-  shareDog();
-  console.log('Chron task ran');
-});
+setInterval(shareDog, 1000 * 60 * 60); // Share every hour afterwards
