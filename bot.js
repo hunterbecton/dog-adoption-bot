@@ -73,7 +73,7 @@ const shareDog = async () => {
 // Share when app deploys
 shareDog();
 
-// Share every hour on minute 30
+// Share at minute 30 past every hour.
 cron.schedule('35 */1 * * *', () => {
   shareDog();
   console.log('Chron task ran');
