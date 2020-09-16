@@ -50,6 +50,8 @@ const newDogsThisHour = async () => {
 const shareDog = async () => {
   const newDogs = await newDogsThisHour();
 
+  console.log(newDogs);
+
   if (newDogs) {
     twitterClient.post(
       'statuses/update',
@@ -68,7 +70,10 @@ const shareDog = async () => {
   }
 };
 
+// Share when app deploys
+shareDog();
+
 // Share dog every hour
-cron.schedule('* * 1 * *', () => {
+cron.schedule('* 1 0 * *', () => {
   shareDog();
 });
