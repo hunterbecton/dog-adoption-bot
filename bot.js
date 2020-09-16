@@ -74,7 +74,7 @@ const shareDog = async () => {
 shareDog();
 
 // Share dog every hour
-cron.schedule('* 1 0 * *', () => {
+cron.schedule('* 1 * * *', () => {
   shareDog();
   console.log('Chron task ran');
 });
