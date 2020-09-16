@@ -4,12 +4,7 @@ const Twitter = require('twitter');
 
 dotenv.config({ path: './config.env' });
 
-const petClient = new petfinder.Client({
-  apiKey: process.env.PF_API_KEY,
-  secret: process.env.PF_SECRET_KEY,
-});
-
-var twitterClient = new Twitter({
+const twitterClient = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.TWITTER_ACCESS_KEY,
@@ -18,6 +13,11 @@ var twitterClient = new Twitter({
 
 const newDogsThisHour = async () => {
   const hourago = new Date(new Date().getTime() - 1000 * 60 * 60);
+
+  const petClient = new petfinder.Client({
+    apiKey: process.env.PF_API_KEY,
+    secret: process.env.PF_SECRET_KEY,
+  });
 
   let dogsWithPhotos = [];
 
