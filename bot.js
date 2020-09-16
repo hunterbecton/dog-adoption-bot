@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const petfinder = require('@petfinder/petfinder-js');
 const Twitter = require('twitter');
+const cron = require('node-cron');
 
 dotenv.config({ path: './config.env' });
 
@@ -11,13 +12,13 @@ const twitterClient = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_SECRET,
 });
 
+const petClient = new petfinder.Client({
+  apiKey: process.env.PF_API_KEY,
+  secret: process.env.PF_SECRET_KEY,
+});
+
 const newDogsThisHour = async () => {
   const hourago = new Date(new Date().getTime() - 1000 * 60 * 60);
-
-  const petClient = new petfinder.Client({
-    apiKey: process.env.PF_API_KEY,
-    secret: process.env.PF_SECRET_KEY,
-  });
 
   let dogsWithPhotos = [];
 
@@ -67,6 +68,7 @@ const shareDog = async () => {
   }
 };
 
-shareDog(); // Run function when server starts
-
-setInterval(shareDog, 1000 * 60 * 60); // Run function every hour
+// Share dog every hour
+cron.schedule('* * 1 * *', () => {
+  shareDog();
+});
