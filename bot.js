@@ -18,6 +18,8 @@ const petClient = new petfinder.Client({
 });
 
 const newDogsThisHour = async () => {
+  await petClient.authenticate();
+
   const hourago = new Date(new Date().getTime() - 1000 * 60 * 60);
 
   let dogsWithPhotos = [];
