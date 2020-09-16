@@ -76,4 +76,5 @@ shareDog();
 // Share dog every hour
 cron.schedule('* 1 0 * *', () => {
   shareDog();
+  console.log('Chron task ran');
 });
